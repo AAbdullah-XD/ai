@@ -1,0 +1,282 @@
+#BFS CODE:
+graph = {
+    '5': ['3', '7'],
+    '3': ['2', '4'],
+    '7': ['8'],
+    '2': [],
+    '4': ['8'],
+    '8': []
+}
+
+visited = []  # List for visited nodes.
+queue = []    # Initialize a queue
+
+def bfs(visited, graph, node):  # Function for BFS
+    visited.append(node)
+    queue.append(node)
+
+    while queue:
+        m = queue.pop(0)
+        print(m, end=" ")
+
+        for neighbour in graph[m]:
+            if neighbour not in visited:
+                visited.append(neighbour)
+                queue.append(neighbour)
+
+# Driver code
+print("Following is the Breadth-First Search")
+bfs(visited, graph, '5')  # Function calling
+####################################################################################################################
+#DFS CODE
+# Define the graph as a dictionary
+graph = {
+    '5': ['3', '8'],
+    '3': ['2', '4'],
+    '8': ['7'],
+    '2': [],
+    '4': [],
+    '7': []
+}
+
+# Initialize an empty set to keep track of visited nodes
+visited = set()  # Set to keep track of visited nodes of the graph.
+
+# Define the DFS function
+def dfs(visited, graph, node):
+    if node not in visited:  # Check if the node has not been visited
+        print(node)  # Print the current node
+        visited.add(node)  # Mark the node as visited
+        for neighbour in graph[node]:  # Iterate through the neighbors of the current node
+            dfs(visited, graph, neighbour)  # Recursively visit each neighbor
+
+# Driver code to start the DFS from node '5'
+print("Following is the Depth-First Search")
+dfs(visited, graph, '5')
+
+####################################################################################################################
+# ANN's CODE:
+import numpy as np
+
+X = np.array(([2,9],[1,5],[3,6]), dtype=float)
+Y = np.array(([92],[86],[89]), dtype=float)
+
+X = X/np.amax(X, axis = 0)
+Y = Y/100
+
+class NeuralNetwork(object):
+    def __init__(self):
+        self.inputSize = 2
+        self.outputSize = 1
+        self.hiddenSize = 3
+
+        self.W1 = np.random.randn(self.inputSize, self.hiddenSize)
+        self.W2 = np.random.randn(self.hiddenSize, self.outputSize)
+
+
+    def feedForward(self, X):
+        self.z  = np.dot(X, self.W1)
+        self.z2 = self.sigmoid(self.z)
+        self.z3 = np.dot(self.z2, self.W2)
+        output  = self.sigmoid(self.z3)
+        return output
+
+    def sigmoid(self, s, deriv= False):
+        if (deriv ==True):
+            return s*(1-s)
+        return 1/(1 + np.exp(-s))
+
+    def backward(self, X, Y, output):
+        self.output_error = Y -  output
+        self.output_delta = self.output_error*self.sigmoid(output, deriv= True)
+
+        self.z2_error = self.output_delta.dot(self.W2.T)
+        self.z2_delta = self.z2_error*self.sigmoid(self.z2, deriv = True)
+
+        self.W1 += X.T.dot(self.z2_delta)
+        self.W2 += self.z2.T.dot(self.output_delta)
+
+
+    def train(self,X,Y):
+        output = self.feedForward(X)
+        self.backward(X,Y,output)
+        
+
+
+
+NN = NeuralNetwork()
+
+print("Input" +str(X))
+print("Actual Loss" +str(Y))
+print("Loss: " + str(np.mean(np.square(Y - NN.feedForward(X)))))
+print("\n")
+print ("Predicted Output : "+ str (NN.feedForward(X)))
+###############################################################################################################
+#DECISION TREE CODE:
+# Importing Libraries
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+from sklearn.tree import export_graphviz
+import graphviz
+
+# Load dataset
+df = pd.read_csv('your_dataset.csv')
+
+# Split dataset into features and labels
+X = df.drop('label', axis=1)
+y = df['label']
+
+# Split dataset into training set and test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Create Decision Tree Classifier
+clf = DecisionTreeClassifier()
+
+# Train the model using the training sets
+clf.fit(X_train, y_train)
+
+# Predict the response for test dataset
+y_pred = clf.predict(X_test)
+
+# Model Accuracy, how often is the classifier correct?
+print("Accuracy:", accuracy_score(y_test, y_pred))
+
+# Confusion Matrix
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+
+# Classification Report
+print("Classification Report:\n", classification_report(y_test, y_pred))
+
+# Visualize the tree
+dot_data = export_graphviz(clf, out_file=None, 
+                           feature_names=X.columns,  
+                           class_names=['class0', 'class1'],  
+                           filled=True, rounded=True,  
+                           special_characters=True)  
+graph = graphviz.Source(dot_data)  
+graph.render("decision_tree")
+########################################################################################################
+#KNN CODE:
+# Importing Libraries
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Load dataset
+df = pd.read_csv('your_dataset.csv')
+
+# Split dataset into features and labels
+X = df.drop('label', axis=1)
+y = df['label']
+
+# Split dataset into training set and test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Feature Scaling
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test = scaler.transform(X_test)
+
+# Create KNN Classifier
+knn = KNeighborsClassifier(n_neighbors=5)
+
+# Train the model using the training sets
+knn.fit(X_train, y_train)
+
+# Predict the response for test dataset
+y_pred = knn.predict(X_test)
+
+# Model Accuracy, how often is the classifier correct?
+print("Accuracy:", accuracy_score(y_test, y_pred))
+
+# Confusion Matrix
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+
+# Classification Report
+print("Classification Report:\n", classification_report(y_test, y_pred))
+###################################################################################################################
+#Linear Regression
+# Importing Libraries
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+
+# Reading the data from the CSV file
+companies = pd.read_csv("1000_Companies.csv")
+
+# Getting the independent variables
+X = companies.iloc[:, :-1].values
+
+# Getting the dependent variable
+y = companies.iloc[:, -1].values
+
+# Encoding categorical Data
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+
+# LabelEncoder for encoding categorical data
+labelencoder = LabelEncoder()
+X[:, 1] = labelencoder.fit_transform(X[:, 1])
+
+# OneHotEncoder for encoding categorical data
+onehotencoder = OneHotEncoder(categorical_features = [0])
+X = onehotencoder.fit_transform(X).toarray()
+
+# Splitting the dataset into training and testing sets
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, random_state = 0)
+
+# Fitting Linear Regression Model to the training set
+from sklearn.linear_model import LinearRegression
+regressor = LinearRegression()
+regressor.fit(X_train, y_train)
+
+# Predicting the test set results
+y_pred = regressor.predict(X_test)
+
+#Calculating the R squared value
+from sklearn.metrics import r2_score
+
+r2_score(y_test, y_pred)
+#############################################################################################################
+#Naive Bayes CODE:
+# Importing Libraries
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import GaussianNB
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Load dataset
+df = pd.read_csv('your_dataset.csv')
+
+# Split dataset into features and labels
+X = df.drop('label', axis=1)
+y = df['label']
+
+# Split dataset into training set and test set
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# Create a Gaussian Classifier
+model = GaussianNB()
+
+# Train the model using the training sets
+model.fit(X_train, y_train)
+
+# Predict the response for test dataset
+y_pred = model.predict(X_test)
+
+# Model Accuracy, how often is the classifier correct?
+print("Accuracy:", accuracy_score(y_test, y_pred))
+
+# Confusion Matrix
+print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
+
+# Classification Report
+print("Classification Report:\n", classification_report(y_test, y_pred))
